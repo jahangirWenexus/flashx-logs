@@ -5,10 +5,11 @@ interface TableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (currentPage: number) => void;
+  pageLoading?: boolean;
 }
 
 export function LoggerTable(options: TableProps) {
-  const { logs, currentPage, totalPages, onPageChange } = options;
+  const { logs, currentPage, totalPages, onPageChange, pageLoading } = options;
   return (
     <div className="border rounded mb-6 overflow-x-auto">
       <div className="hidden sm:block">
@@ -27,6 +28,7 @@ export function LoggerTable(options: TableProps) {
           </thead>
           <tbody>
             {logs.length > 0 &&
+              !pageLoading &&
               logs.map((log) => (
                 <tr key={log.id} className="border-t">
                   <td className="px-4 py-2">
@@ -68,66 +70,76 @@ export function LoggerTable(options: TableProps) {
 
       {/* Mobile Table */}
       <div className="sm:hidden space-y-4 p-4">
-        {logs.map((log) => (
-          <div key={log.id} className="border rounded p-4 shadow-sm">
-            <div className="mb-2">
-              <span className="font-semibold">Timestamp:</span>
-              <div>{new Date(log.timestamp).toLocaleString()}</div>
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Store:</span>
-              <div>{log.storeName}</div>
-              <div className="text-gray-500 text-sm">{log.storeDomain}</div>
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Level:</span>
-              <div className={log.level !== "INFO" ? "text-red-600" : ""}>
-                {log.level}
+        {!pageLoading &&
+          logs.map((log) => (
+            <div key={log.id} className="border rounded p-4 shadow-sm">
+              <div className="mb-2">
+                <span className="font-semibold">Timestamp:</span>
+                <div>{new Date(log.timestamp).toLocaleString()}</div>
               </div>
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Tracking ID:</span>
-              <div>{log.trackingId}</div>
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Message:</span>
-              <div>{log.message}</div>
-            </div>
-            <div>
-              <span className="font-semibold">Metadata:</span>
+              <div className="mb-2">
+                <span className="font-semibold">Store:</span>
+                <div>{log.storeName}</div>
+                <div className="text-gray-500 text-sm">{log.storeDomain}</div>
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Level:</span>
+                <div className={log.level !== "INFO" ? "text-red-600" : ""}>
+                  {log.level}
+                </div>
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Tracking ID:</span>
+                <div>{log.trackingId}</div>
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Message:</span>
+                <div>{log.message}</div>
+              </div>
               <div>
-                {log.metadata ? (
-                  <details>
-                    <summary className="text-blue-600 underline cursor-pointer">
-                      View
-                    </summary>
-                    <pre className="text-xs whitespace-pre-wrap max-h-[200px] overflow-auto">
-                      {JSON.stringify(log.metadata, null, 2)}
-                    </pre>
-                  </details>
-                ) : (
-                  "—"
-                )}
+                <span className="font-semibold">Metadata:</span>
+                <div>
+                  {log.metadata ? (
+                    <details>
+                      <summary className="text-blue-600 underline cursor-pointer">
+                        View
+                      </summary>
+                      <pre className="text-xs whitespace-pre-wrap max-h-[200px] overflow-auto">
+                        {JSON.stringify(log.metadata, null, 2)}
+                      </pre>
+                    </details>
+                  ) : (
+                    "—"
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
-      {logs.length == 0 && (
-        <div className="flex items-center justify-center h-full py-16 px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="mt-4 text-xl font-semibold text-gray-700">
-              No Data Available
-            </h2>
-
-            <p className="mt-2 text-gray-500">
-              We couldn’t find any items that match your search.{" "}
-              <br className="hidden sm:block" />
-              Try adjusting your keywords or filters.
-            </p>
+      {pageLoading ? (
+        <div>
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
           </div>
+          <p className="text-center text-gray-500">Loading logs...</p>
         </div>
+      ) : (
+        logs.length === 0 && (
+          <div className="flex items-center justify-center h-full py-16 px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h2 className="mt-4 text-xl font-semibold text-gray-700">
+                No Data Available
+              </h2>
+
+              <p className="mt-2 text-gray-500">
+                We couldn’t find any items that match your search.{" "}
+                <br className="hidden sm:block" />
+                Try adjusting your keywords or filters.
+              </p>
+            </div>
+          </div>
+        )
       )}
       {/* Pagination */}
       <div className="flex justify-center gap-3 sticky bottom-0 items-center  p-4 border-t bg-gray-100">

@@ -1,4 +1,4 @@
-import { TextField } from "@shopify/polaris";
+import { Select, TextField } from "@shopify/polaris";
 import { useState } from "react";
 
 interface SearchBarProps {
@@ -7,9 +7,11 @@ interface SearchBarProps {
   onSearch: ({
     storeId,
     trackingId,
+    level,
   }: {
     storeId: string;
     trackingId: string;
+    level: string;
   }) => void;
 }
 
@@ -18,9 +20,10 @@ export function SearchBar(options: SearchBarProps) {
 
   const [storeId, setStoreId] = useState(storeid ?? "");
   const [trackingId, setTrackingId] = useState(trackingid ?? "");
+  const [selected, setSelected] = useState("");
 
   const handleSearch = () => {
-    onSearch({ storeId, trackingId });
+    onSearch({ storeId, trackingId, level: selected });
   };
 
   return (
@@ -41,6 +44,23 @@ export function SearchBar(options: SearchBarProps) {
           autoComplete="off"
         />
       </div>
+
+      <div className="mb-4 md:mb-0">
+        <Select
+          label="Level"
+          options={[
+            { value: "", label: "" },
+            { value: "INFO", label: "INFO" },
+            { value: "WARN", label: "WARN" },
+            { value: "ERROR", label: "ERROR" },
+          ]}
+          onChange={(value: string) => {
+            setSelected(value);
+          }}
+          value={selected}
+        />
+      </div>
+
       <div className="flex items-end h-full gap-2">
         {/*<Button onClick={handleSearch}>Search</Button>*/}
         <button

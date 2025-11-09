@@ -8,7 +8,7 @@ export default function ReviewActivityTable() {
     const [parents, setParents] = useState<any[]>([]);
     const [expanded, setExpanded] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const [limit] = useState(5); // number of rows per page
+    const [limit] = useState(20); // number of rows per page
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
 

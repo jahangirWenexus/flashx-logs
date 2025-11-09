@@ -17,7 +17,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
     return [
       {
         title: "Total Installed Stores",
-        value: stats?.totalStore ?? 0,
+        value: 0,//stats?.totalStore ?? 0,
         bg: "#ffffff",
         icon: (
           <div className="bg-blue-400 p-3 rounded text-white">
@@ -28,7 +28,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
       },
       {
         title: "Total Active Stores",
-        value: stats?.totalActive ?? 0,
+        value: 0, //stats?.totalActive ?? 0,
         bg: "#cff1cf",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">
@@ -38,7 +38,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
       },
       {
         title: "Total Campaigns",
-        value: stats?.totalInactive ?? 0,
+        value: 0, //stats?.totalInactive ?? 0,
         bg: "#ffd2e9",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
@@ -48,7 +48,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
       },
       {
         title: "Total Active Campaigns",
-        value: stats?.trial ?? 0,
+        value: 0, // stats?.trial ?? 0,
         bg: "#b4fed2",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
@@ -58,7 +58,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
       },
       {
         title: "Total Scheduled Campaigns",
-        value: stats?.trial ?? 0,
+        value:0, // stats?.trial ?? 0,
         bg: "#d5ebff",
         icon: (
             <div className="bg-gray-500  p-3 rounded text-white">

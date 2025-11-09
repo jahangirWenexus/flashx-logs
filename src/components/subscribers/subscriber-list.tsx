@@ -33,6 +33,7 @@ const SubscriberList = ({
   page: number;
   setPage: Function;
   setFilters: Function;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   setQueryValue: Function;
 
   setReFetch: Function;
@@ -85,21 +86,23 @@ const SubscriberList = ({
 
   const orders = useMemo(() => {
     return stores?.map((store) => {
-      const totalOrders = store.PackageProtectionOrders.length;
-      const protectedOrders = store.PackageProtectionOrders.filter(
+      const totalOrders = 100;
+          //store.PackageProtectionOrders.length;
+      const protectedOrders = 100;
+      /*store.PackageProtectionOrders.filter(
         (e) => e.hasPackageProtection
-      ).length;
-      const unProtectedOrders =
-        store.PackageProtectionOrders.length - protectedOrders;
-      const revenue = store.PackageProtectionOrders?.reduce((sum, order) => {
+      ).length;*/
+      const unProtectedOrders =20 /*
+        store.PackageProtectionOrders.length - protectedOrders;*/
+      const revenue = 10; /*store.PackageProtectionOrders?.reduce((sum, order) => {
         return order.hasPackageProtection
           ? sum + parseFloat(order.orderAmount)
           : sum;
-      }, 0).toFixed(2);
-      const insuranceEarning = store.PackageProtectionOrders.reduce(
+      }, 0).toFixed(2);*/
+      const insuranceEarning = 20; /*store.PackageProtectionOrders.reduce(
         (a, b) => a + parseFloat(b.protectionFee),
         0
-      ).toFixed(2);
+      ).toFixed(2);*/
 
       const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
         ? 0

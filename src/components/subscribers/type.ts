@@ -10,9 +10,7 @@ interface Timezone {
 }
 
 // Package protection settingsc
-interface PackageProtection {
-  enabled: boolean;
-}
+
 
 // Individual protection order summary
 export interface PackageProtectionOrderSummary {

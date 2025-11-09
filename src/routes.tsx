@@ -8,6 +8,7 @@ import Login from "./auth/login";
 import ActivityLogs from "./components/logs";
 import Settings from "./components/settings";
 import Integrations from "./components/integrations";
+import ReviewLogs from "./components/review-log";
 
 export const router = createHashRouter([
   {},
@@ -46,6 +47,14 @@ export const router = createHashRouter([
     ),
   },
   {
+    path: "review",
+    element: (
+      <Layout>
+        <ReviewLogs />
+      </Layout>
+    ),
+  },
+  {
     path: "settings",
     element: (
       <Layout>
@@ -61,6 +70,7 @@ export const router = createHashRouter([
       </Layout>
     ),
   },
+
   {
     path: "*",
     element: <>Page Not Found!</>,

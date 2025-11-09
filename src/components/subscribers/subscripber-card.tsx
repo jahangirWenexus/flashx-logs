@@ -1,9 +1,7 @@
 import { Icon, Text } from "@shopify/polaris";
 import {
-  BlogIcon,
-  OrderIcon,
-  StatusActiveIcon,
-  XCircleIcon,
+  ClockIcon, MegaphoneFilledIcon,
+  StatusActiveIcon, StoreIcon,
 } from "@shopify/polaris-icons";
 import { useMemo, type ReactNode } from "react";
 
@@ -18,18 +16,18 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
   }[] = useMemo(() => {
     return [
       {
-        title: "Total Installed",
+        title: "Total Installed Stores",
         value: stats?.totalStore ?? 0,
         bg: "#ffffff",
         icon: (
           <div className="bg-blue-400 p-3 rounded text-white">
-            <Icon source={OrderIcon} />
+            <Icon source={StoreIcon} />
           </div>
         ),
         // icon:<img width='70' src='https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard%20Widget%20Assets/assets/order-image.png' alt='order-image'/>
       },
       {
-        title: "Active",
+        title: "Total Active Stores",
         value: stats?.totalActive ?? 0,
         bg: "#cff1cf",
         icon: (
@@ -39,29 +37,39 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
         ),
       },
       {
-        title: "Inactive",
+        title: "Total Campaigns",
         value: stats?.totalInactive ?? 0,
         bg: "#ffd2e9",
         icon: (
-          <div className="bg-red-500 p-3 rounded text-white">
-            <Icon source={XCircleIcon} />
+          <div className="bg-gray-500 p-3 rounded text-white">
+            <Icon source={MegaphoneFilledIcon} />
           </div>
         ),
       },
       {
-        title: "Trial",
+        title: "Total Active Campaigns",
         value: stats?.trial ?? 0,
-        bg: "#ffcccc",
+        bg: "#b4fed2",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
-            <Icon source={BlogIcon} />
+            <Icon source={StatusActiveIcon} />
           </div>
+        ),
+      },
+      {
+        title: "Total Scheduled Campaigns",
+        value: stats?.trial ?? 0,
+        bg: "#d5ebff",
+        icon: (
+            <div className="bg-gray-500  p-3 rounded text-white">
+              <Icon source={ClockIcon} />
+            </div>
         ),
       },
     ];
   }, [stats]);
   return (
-    <div className="grid grid-cols-2  md:grid-cols-4 gap-2 md:gap-4 gap-y-4 ">
+    <div className="grid grid-cols-2  md:grid-cols-5 gap-2 md:gap-4 gap-y-4 ">
       {" "}
       {dashboardCartItems.map((e, i) => (
         <div className="col-span-1 h-full" key={i}>

@@ -40,6 +40,11 @@ const Layout = ({ children }: DashboardLayoutProps) => {
         url: "/activity-logs",
         icon: OrderIcon,
       },
+      {
+        name: "Review Log",
+        url: "/review",
+        icon: OrderIcon,
+      },
     ].map((item) => {
       const isClaimsRoute = /^\/subscribers\/[^/]+$/.test(location.pathname);
       return {

@@ -9,7 +9,7 @@ interface Timezone {
   Country: Country;
 }
 
-// Package protection settings
+// Package protection settingsc
 interface PackageProtection {
   enabled: boolean;
 }
@@ -32,17 +32,17 @@ export interface StoreRecord {
   id: string; // Shopify GID
   uninstalledAt: string | null; // ISO timestamp or null
   currencyCode: string; // e.g. "USD", "BDT"
-  PackageProtection: PackageProtection;
   Timezone: Timezone;
-  PackageProtectionOrders: PackageProtectionOrderSummary[];
+  campaignsCount: number;
+  activeCampaignsCount?: number;
 }
 
 // Array of stores
 export type StoreRecordList = StoreRecord[];
 
 export interface IStats {
-  totalActive: number;
-  totalInactive: number;
-  totalStore: number;
-  trial?: number;
+  totalStores: number;
+  totalCampaigns: number;
+  totalActiveCampaigns: number;
+  totalActiveStores: number;
 }

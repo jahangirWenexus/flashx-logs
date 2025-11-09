@@ -32,15 +32,15 @@ export interface StoreRecord {
   currencyCode: string; // e.g. "USD", "BDT"
   Timezone: Timezone;
   campaignsCount: number;
-  activeCampaignsCount?: number;
 }
 
 // Array of stores
 export type StoreRecordList = StoreRecord[];
 
 export interface IStats {
-  totalStores: number;
-  totalCampaigns: number;
-  totalActiveCampaigns: number;
-  totalActiveStores: number;
+  totalStore:number,
+  totalActive:number,
+  totalCampaigns:number,
+  totalActiveCampaigns:number,
+  totalScheduleCampaigns:number,
 }

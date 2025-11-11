@@ -17,7 +17,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
     return [
       {
         title: "Total Installed Stores",
-        value: stats.totalStore,//stats?.totalStore ?? 0,
+        value: stats.totalInstalled,//stats?.totalStore ?? 0,
         bg: "#ffffff",
         icon: (
           <div className="bg-blue-400 p-3 rounded text-white">
@@ -28,7 +28,7 @@ const SubscribersCart = ({ stats }: { stats: IStats }) => {
       },
       {
         title: "Total Active Stores",
-        value: stats.totalActive, //stats?.totalActive ?? 0,
+        value: stats.currentInstalled, //stats?.totalActive ?? 0,
         bg: "#cff1cf",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">

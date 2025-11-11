@@ -1,7 +1,7 @@
 import SubscribersCart from "./subscripber-card";
 import SubscriberList from "./subscriber-list";
 import useDebounce from "../../hooks/debounce";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {BASE_URL} from "../../config";
 // import * as XLSX from "xlsx";
 import type {IStats, StoreRecordList} from "./type";
@@ -12,10 +12,11 @@ const Subscribers = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [stats, setStats] = useState<IStats>({
-        totalActive: 0,
+        currentInstalled: 0,
+        totalInstalled: 0,
+        totalUninstalled: 0,
         totalCampaigns: 0,
         totalScheduleCampaigns: 0,
-        totalStore: 0,
         totalActiveCampaigns: 0,
 
     });
@@ -35,91 +36,60 @@ const Subscribers = () => {
             .then((res) => {
                 setSubscribers(res.data);
                 setPagination(res.pagination);
-                setStats(res.stats);
+                // setStats(res.stats);
                 setLoading(false);
             })
             .catch((err) => {
                 console.log(err);
                 setSubscribers([]);
                 setPagination({});
-                setStats({
-                    totalActive: 0,
-                    totalCampaigns: 0,
-                    totalScheduleCampaigns: 0,
-                    totalStore: 0,
-                    totalActiveCampaigns: 0,
-
-                });
+                // setStats({
+                //     totalActive: 0,
+                //     totalCampaigns: 0,
+                //     totalScheduleCampaigns: 0,
+                //     totalStore: 0,
+                //     totalActiveCampaigns: 0,
+                //
+                // });
                 setLoading(false);
             });
     }, [page, filters, searchTerm, reFetch]);
+
+    const fetchMetrics = useCallback(async () => {
+        // setLoading(true);
+        fetch(
+            `${BASE_URL}/api/app-summary`
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                setStats(res);
+                // setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setStats({
+                    totalInstalled: 0,
+                    totalUninstalled: 0,
+                    totalCampaigns: 0,
+                    currentInstalled: 0,
+                    totalScheduleCampaigns: 0,
+                    totalActiveCampaigns: 0,
+
+                });
+                // setLoading(false);
+            });
+
+    }, [stats, setStats])
+
+    useEffect(() => {
+        fetchMetrics();
+    }, []);
 
     useEffect(() => {
         setPage(1);
     }, [filters, searchTerm]);
 
-    // const prepareExportData = (data: any) => {
-    //   return data?.map((order: any) => {
-    //     const totalOrders = order.PackageProtectionOrders.length;
-    //     const protectedOrders = order.PackageProtectionOrders.filter(
-    //       (e: any) => e.hasPackageProtection
-    //     ).length;
-    //     const unProtectedOrders =
-    //       order.PackageProtectionOrders.length - protectedOrders;
-    //     const revenue = order.PackageProtectionOrders?.reduce(
-    //       (sum: any, order: any) => {
-    //         return order.hasPackageProtection
-    //           ? sum + parseFloat(order.orderAmount)
-    //           : sum;
-    //       },
-    //       0
-    //     ).toFixed(2);
-    //     const insuranceEarning = order.PackageProtectionOrders.reduce(
-    //       (a: any, b: any) => a + parseFloat(b.protectionFee),
-    //       0
-    //     ).toFixed(2);
-    //
-    //     const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
-    //       ? 0
-    //       : (protectedOrders / totalOrders) * 100;
-    //     const country = order.Timezone.Country.name;
-    //     const { name, plan, development, createdAt } = order;
-    //     return {
-    //       name,
-    //       plan,
-    //       totalOrders,
-    //       protectedOrders,
-    //       unProtectedOrders,
-    //       revenue,
-    //       insuranceEarning,
-    //       conversionRate: conversionRate.toFixed(2),
-    //       country,
-    //       development,
-    //       createdAt,
-    //     };
-    //   });
-    // };
 
-    // ts-ignore
-    // const handleExport = () => {
-    //   // fetch export data from the API
-    //   fetch(`${BASE_URL}/admin/api/exports?action=subscriber&filter=${filters}`)
-    //     .then((res) => res.json())
-    //     .then((res) => {
-    //       const xlsxData = prepareExportData(res.data);
-    //       const wb = XLSX.utils.book_new();
-    //
-    //       // Convert JSON data to a worksheet
-    //       const ws = XLSX.utils.json_to_sheet(xlsxData as any);
-    //
-    //       // Append the worksheet to the workbook
-    //       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    //
-    //       // Generate and download the Excel file
-    //       XLSX.writeFile(wb, "subscribers.xlsx");
-    //     })
-    //     .catch((e) => console.log(e));
-    // };
     return (
         <div className="p-6">
             <SubscribersCart stats={stats}/>

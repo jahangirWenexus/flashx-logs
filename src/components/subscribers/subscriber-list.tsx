@@ -10,10 +10,7 @@ import {
 } from "@shopify/polaris";
 import type { TabProps } from "@shopify/polaris";
 import { useState, useMemo, useEffect } from "react";
-import { moneyFormater } from "../../utils/money-format";
-import SwitchButton from "../common/switch-button";
 import type { StoreRecordList } from "./type";
-import { BASE_URL } from "../../config";
 import { Link } from "react-router";
 
 const SubscriberList = ({
@@ -24,7 +21,6 @@ const SubscriberList = ({
   setPage = () => {},
   setFilters = () => {},
   setQueryValue = () => {},
-  setReFetch = () => {},
   queryValue,
 }: {
   stores: StoreRecordList;
@@ -61,52 +57,20 @@ const SubscriberList = ({
     }
   }, [selected]);
 
-  const handleStatusSwitch = (id: string, development: boolean) => {
-    const formData = new FormData();
-    formData.append("storeId", id);
-    formData.append("development", development.toString());
-    formData.append("action", "updateStore");
 
-    fetch(`${BASE_URL}/admin/api/subscriber`, {
-      method: "POST",
-      body: formData,
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (data.success) {
-          setReFetch((prev: boolean) => !prev);
-        } else {
-          console.error(data.error);
-        }
-      })
-      .catch((err) => {
-        console.error("Error updating store status:", err);
-      });
-  };
 
   const orders = useMemo(() => {
     return stores?.map((store) => {
-      const totalOrders = 100;
-          //store.PackageProtectionOrders.length;
-      const protectedOrders = 100;
-      /*store.PackageProtectionOrders.filter(
-        (e) => e.hasPackageProtection
-      ).length;*/
-      const unProtectedOrders =20 /*
-        store.PackageProtectionOrders.length - protectedOrders;*/
-      const revenue = 10; /*store.PackageProtectionOrders?.reduce((sum, order) => {
-        return order.hasPackageProtection
-          ? sum + parseFloat(order.orderAmount)
-          : sum;
-      }, 0).toFixed(2);*/
-      const insuranceEarning = 20; /*store.PackageProtectionOrders.reduce(
-        (a, b) => a + parseFloat(b.protectionFee),
-        0
-      ).toFixed(2);*/
+      // @ts-ignore
 
-      const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
-        ? 0
-        : (protectedOrders / totalOrders) * 100;
+      const norm = s => (s ?? "").toUpperCase();
+      const campaigns = store?.Campaigns ?? [];
+
+      const totalCampaigns = campaigns.length;
+
+      const activeCampaigns   = campaigns.filter(c => norm(c.status) === "ACTIVE").length;
+      const inactiveCampaigns = campaigns.filter(c => norm(c.status) === "INACTIVE").length;
+
       const country = store.Timezone.Country.name;
 
       return {
@@ -118,22 +82,20 @@ const SubscriberList = ({
           </Text>
         ),
         plan: <Badge tone="critical">{"Free"}</Badge>,
-        totalOrders: totalOrders,
-        totalProtectionOrders: protectedOrders,
-        totalUnprotectionOrders: unProtectedOrders,
-        revenue: moneyFormater(revenue, store.currencyCode),
-        insuranceEarning: moneyFormater(insuranceEarning, store.currencyCode),
-        conversionRate: conversionRate.toFixed(2),
+        totalCampaigns:totalCampaigns,
+        activeCampaign: activeCampaigns,
+        inactiveCampaign: inactiveCampaigns,
         country: country,
         storePlan: store.plan,
-        status: (
-          <SwitchButton
-            switchOn={!store.development}
-            handleSwitch={() =>
-              handleStatusSwitch(store.id, !store.development)
-            }
-          />
-        ),
+        // status: (
+        //   <SwitchButton
+        //     switchOn={!store.development}
+        //     handleSwitch={() =>
+        //       handleStatusSwitch(store.id, !store.development)
+        //     }
+        //   />
+        // ),
+        appReview: store.appReview,
         createdAt: new Date(store.createdAt).toDateString(),
       };
     });
@@ -146,19 +108,16 @@ const SubscriberList = ({
     (
       {
         id,
-        plan,
         domain,
-        status,
-        country,
-        revenue,
         storeName,
-        createdAt,
+        plan,
+        totalCampaigns,
+        activeCampaign,
+        inactiveCampaign,
+        country,
         storePlan,
-        totalOrders,
-        conversionRate,
-        insuranceEarning,
-        totalProtectionOrders,
-        totalUnprotectionOrders,
+        appReview,
+        createdAt,
       },
       index
     ) => (
@@ -176,16 +135,36 @@ const SubscriberList = ({
           </Link>
         </IndexTable.Cell>
         <IndexTable.Cell>{plan}</IndexTable.Cell>
-        <IndexTable.Cell>{totalOrders}</IndexTable.Cell>
-        <IndexTable.Cell>{totalProtectionOrders}</IndexTable.Cell>
-        <IndexTable.Cell>{totalUnprotectionOrders}</IndexTable.Cell>
-        <IndexTable.Cell>{revenue}</IndexTable.Cell>
-        <IndexTable.Cell>{insuranceEarning}</IndexTable.Cell>
-        <IndexTable.Cell>{conversionRate} % </IndexTable.Cell>
+        <IndexTable.Cell>{totalCampaigns}</IndexTable.Cell>
+        <IndexTable.Cell>{activeCampaign}</IndexTable.Cell>
+        <IndexTable.Cell>{inactiveCampaign}</IndexTable.Cell>
+        <IndexTable.Cell>N/A</IndexTable.Cell>
         <IndexTable.Cell>{storePlan}</IndexTable.Cell>
         <IndexTable.Cell>{country}</IndexTable.Cell>
         <IndexTable.Cell>{createdAt}</IndexTable.Cell>
-        <IndexTable.Cell>{status}</IndexTable.Cell>
+        <IndexTable.Cell>
+          <Link
+            to={`https://${domain}/admin/apps/package-protection`}
+            className="text-blue-700"
+            target="_blank"
+          >
+            <Text variant="bodyMd" fontWeight="bold" as="span">
+              {appReview? "Reviewed" : "Not Reviewed"}
+            </Text>
+          </Link>
+        </IndexTable.Cell>
+
+
+        {/*<IndexTable.Cell>{totalOrders}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{totalProtectionOrders}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{totalUnprotectionOrders}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{revenue}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{insuranceEarning}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{conversionRate} % </IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{storePlan}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{country}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{createdAt}</IndexTable.Cell>*/}
+        {/*<IndexTable.Cell>{status}</IndexTable.Cell>*/}
       </IndexTable.Row>
     )
   );
@@ -222,16 +201,14 @@ const SubscriberList = ({
         headings={[
           { title: "Store Name" },
           { title: "Plan" },
-          { title: "Total Orders" },
-          { title: "Protected Order" },
-          { title: "Unprotected Order" },
+          { title: "Total Campaigns" },
+          { title: "Active Campaigns" },
+          { title: "Inactive Campaigns" },
           { title: "Secured Revenue" },
-          { title: "Insurance Earning" },
-          { title: "Conversion Rate" },
           { title: "Shopify Status" },
           { title: "Country" },
           { title: "Installed At" },
-          { title: "Status" },
+          { title: "Review" },
         ]}
         pagination={{
           hasPrevious: pagination?.hasPrevPage,

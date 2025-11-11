@@ -31,15 +31,20 @@ export interface StoreRecord {
   uninstalledAt: string | null; // ISO timestamp or null
   currencyCode: string; // e.g. "USD", "BDT"
   Timezone: Timezone;
-  campaignsCount: number;
+  appReview:boolean;
+  Campaigns:{
+    id: string;
+    status: string;
+  }[]
 }
 
 // Array of stores
 export type StoreRecordList = StoreRecord[];
 
 export interface IStats {
-  totalStore:number,
-  totalActive:number,
+  totalInstalled:number,
+  currentInstalled:number,
+  totalUninstalled:number,
   totalCampaigns:number,
   totalActiveCampaigns:number,
   totalScheduleCampaigns:number,

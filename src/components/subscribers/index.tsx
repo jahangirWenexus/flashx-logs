@@ -1,112 +1,123 @@
 import SubscribersCart from "./subscripber-card";
 import SubscriberList from "./subscriber-list";
 import useDebounce from "../../hooks/debounce";
-import {useCallback, useEffect, useState} from "react";
-import {BASE_URL} from "../../config";
-// import * as XLSX from "xlsx";
-import type {IStats, StoreRecordList} from "./type";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { BASE_URL } from "../../config";
+import type { IStats, StoreRecordList } from "./type";
+
+const initialStats: IStats = {
+    currentInstalled: 0,
+    totalInstalled: 0,
+    totalUninstalled: 0,
+    totalCampaigns: 0,
+    totalScheduleCampaigns: 0,
+    totalActiveCampaigns: 0,
+};
 
 const Subscribers = () => {
     const [data, setSubscribers] = useState<StoreRecordList>([]);
     const [pagination, setPagination] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
-    const [stats, setStats] = useState<IStats>({
-        currentInstalled: 0,
-        totalInstalled: 0,
-        totalUninstalled: 0,
-        totalCampaigns: 0,
-        totalScheduleCampaigns: 0,
-        totalActiveCampaigns: 0,
-
-    });
+    const [stats, setStats] = useState<IStats>(initialStats);
     const [filters, setFilters] = useState<string>("all");
     const [queryValue, setQueryValue] = useState("");
-    const searchTerm = useDebounce(queryValue, 700);
     const [reFetch, setReFetch] = useState<boolean>(false);
 
-    console.log(data)
+    // Debounce search input so we don't fetch on every keystroke
+    const searchTerm = useDebounce(queryValue, 700);
 
+    // Guards: ensure only the latest request can update state
+    const listReqIdRef = useRef(0);
+
+    // ---- Fetch Subscribers (list) ----
     useEffect(() => {
+        const controller = new AbortController();
+        const myReqId = ++listReqIdRef.current;
+
+        // Build URL safely
+        const params = new URLSearchParams({
+            page: String(page),
+            limit: "50",
+            filter: filters,
+            searchTerm: searchTerm ?? "",
+        });
+
         setLoading(true);
-        fetch(
-            `${BASE_URL}/admin/dashboard?page=${page}&limit=50&filter=${filters}&searchTerm=${searchTerm}`
-        )
+
+        fetch(`${BASE_URL}/admin/dashboard?${params.toString()}`, {
+            signal: controller.signal,
+            // include CORS mode if needed; not required in most setups
+            // mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            // credentials: "include", // <-- enable if your API needs cookies
+        })
             .then((res) => res.json())
             .then((res) => {
-                setSubscribers(res.data);
-                setPagination(res.pagination);
-                // setStats(res.stats);
-                setLoading(false);
+                // Ignore if a newer request has started since this one
+                if (myReqId !== listReqIdRef.current) return;
+                setSubscribers(res?.data ?? []);
+                setPagination(res?.pagination ?? {});
             })
             .catch((err) => {
-                console.log(err);
+                if (controller.signal.aborted) return; // expected on cleanup
+                console.error("List fetch error:", err);
+                if (myReqId !== listReqIdRef.current) return;
                 setSubscribers([]);
                 setPagination({});
-                // setStats({
-                //     totalActive: 0,
-                //     totalCampaigns: 0,
-                //     totalScheduleCampaigns: 0,
-                //     totalStore: 0,
-                //     totalActiveCampaigns: 0,
-                //
-                // });
-                setLoading(false);
+            })
+            .finally(() => {
+                if (myReqId === listReqIdRef.current) {
+                    setLoading(false);
+                }
             });
+
+        // Cancel on dependency change/unmount so stale requests don't race
+        return () => controller.abort();
     }, [page, filters, searchTerm, reFetch]);
 
-    const fetchMetrics = useCallback(async () => {
-        // setLoading(true);
-        fetch(
-            `${BASE_URL}/api/app-summary`,
-            {mode: "cors", headers: new Headers({"Content-Type": "application/json"}) , method:"GET"}
-        )
-            .then((res) => res.json())
-            .then((res) => {
-                setStats(res);
-                // setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-                setStats({
-                    totalInstalled: 0,
-                    totalUninstalled: 0,
-                    totalCampaigns: 0,
-                    currentInstalled: 0,
-                    totalScheduleCampaigns: 0,
-                    totalActiveCampaigns: 0,
-
-                });
-                // setLoading(false);
-            });
-
-    }, [stats, setStats])
-
-    useEffect(() => {
-        fetchMetrics();
-    }, []);
-
+    // Reset to first page when filters/search change
     useEffect(() => {
         setPage(1);
     }, [filters, searchTerm]);
 
+    // ---- Fetch Metrics (summary) ----
+    const fetchMetrics = useCallback(() => {
+        const controller = new AbortController();
+
+        fetch(`${BASE_URL}/api/app-summary`, {
+            signal: controller.signal,
+            // mode: "cors",
+            headers: { "Content-Type": "application/json" },
+            // credentials: "include",
+            method: "GET",
+        })
+            .then((res) => res.json())
+            .then((res) => setStats(res ?? initialStats))
+            .catch((err) => {
+                if (controller.signal.aborted) return;
+                console.error("Metrics fetch error:", err);
+                setStats(initialStats);
+            });
+
+        return () => controller.abort();
+    }, []);
+
+    // Run metrics once on mount
+    useEffect(() => {
+        const cleanup = fetchMetrics();
+        return () => {
+            // if fetchMetrics returned a cleanup, call it
+            if (typeof cleanup === "function") cleanup();
+        };
+    }, [fetchMetrics]);
 
     return (
         <div className="p-6">
-            <SubscribersCart stats={stats}/>
-            <br/>
-            {/*<Box paddingBlockEnd={"400"}>*/}
-            {/*  <div className="flex justify-end">*/}
-            {/*    <Button*/}
-            {/*      variant="primary"*/}
-            {/*      tone="success"*/}
-            {/*      onClick={handleExport}*/}
-            {/*      icon={<Icon source={ExportIcon} />}*/}
-            {/*    >*/}
-            {/*      Export*/}
-            {/*    </Button>*/}
-            {/*  </div>*/}
-            {/*</Box>*/}
+            <SubscribersCart stats={stats} />
+            <br />
             <SubscriberList
                 stores={data ?? []}
                 pagination={pagination}

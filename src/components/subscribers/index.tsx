@@ -58,7 +58,8 @@ const Subscribers = () => {
     const fetchMetrics = useCallback(async () => {
         // setLoading(true);
         fetch(
-            `${BASE_URL}/api/app-summary`
+            `${BASE_URL}/api/app-summary`,
+            {mode: "cors", headers: new Headers({"Content-Type": "application/json"}) , method:"GET"}
         )
             .then((res) => res.json())
             .then((res) => {

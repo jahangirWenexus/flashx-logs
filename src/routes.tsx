@@ -5,7 +5,7 @@ import Layout from "./components/layout";
 import Subscribers from "./components/subscribers";
 import Subscriber from "./components/subscriber";
 import Login from "./auth/login";
-import ActivityLogs from "./components/logs";
+import ActivityLogs from "./components/userLogs";
 import Settings from "./components/settings";
 import Integrations from "./components/integrations";
 import ReviewLogs from "./components/review-log";

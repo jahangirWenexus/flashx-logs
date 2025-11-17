@@ -6,16 +6,19 @@ import {
   StatusActiveIcon,
   XCircleIcon,
 } from "@shopify/polaris-icons";
-import { moneyFormater } from "../../utils/money-format";
 
-const SubscriberDetailsCart = ({
+const CampaignsDetailsCart = ({
   stats,
-  moneyFormat,
 }: {
-  stats: any;
-  moneyFormat: string;
+  stats: {
+    totalCampaigns:number,
+    totalActiveCampaigns:number,
+    totalInactiveCampaigns:number,
+    totalScheduleCampaigns:number,
+    totalDraftCampaigns:number,
+    totalOthersCampaigns:number,
+  };
 }) => {
-  // console.log("SubscriberDetailsCart stats", moneyFormat);
 
   const dashboardCartItems: {
     title: string;
@@ -24,28 +27,36 @@ const SubscriberDetailsCart = ({
     icon: ReactNode;
   }[] = useMemo(() => {
     const {
-      totalOrder,
-      protectedOrder,
-      unprotectedOrder,
-      securedRevenue,
-      insuranceEarning,
-    } = stats || {};
-    const conversionRate = (protectedOrder / totalOrder) * 100 || 0;
+      totalCampaigns,
+      totalActiveCampaigns,
+      totalInactiveCampaigns,
+      totalScheduleCampaigns,
+      totalDraftCampaigns,
+      totalOthersCampaigns,
+    } = stats || {
+        totalCampaigns: 0,
+        totalActiveCampaigns: 0,
+        totalInactiveCampaigns: 0,
+        totalScheduleCampaigns: 0,
+        totalDraftCampaigns: 0,
+        totalOthersCampaigns: 0,
+    };
+
     return [
       {
-        title: "Total Orders",
-        value: totalOrder ?? 0,
+        title: "Total Campaigns",
+        value: totalCampaigns,
         bg: "#ffffff",
         icon: (
           <div className="bg-blue-400 p-3 rounded text-white">
             <Icon source={OrderIcon} />
           </div>
         ),
-        // icon:<img width='70' src='https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard%20Widget%20Assets/assets/order-image.png' alt='order-image'/>
+
       },
       {
-        title: "Protected Orders",
-        value: protectedOrder,
+        title: "Active Campaigns",
+        value: totalActiveCampaigns,
         bg: "#cff1cf",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">
@@ -54,8 +65,8 @@ const SubscriberDetailsCart = ({
         ),
       },
       {
-        title: "Unprotected Orders",
-        value: unprotectedOrder,
+        title: "Inactive Campaigns",
+        value: totalInactiveCampaigns,
         bg: "#ffd2e9",
         icon: (
           <div className="bg-red-500 p-3 rounded text-white">
@@ -64,8 +75,8 @@ const SubscriberDetailsCart = ({
         ),
       },
       {
-        title: "Conversion Rate",
-        value: `${conversionRate.toFixed(2)}%`,
+        title: "Scheduled Campaigns",
+        value: totalScheduleCampaigns,
         bg: "#ffcccc",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
@@ -74,8 +85,8 @@ const SubscriberDetailsCart = ({
         ),
       },
       {
-        title: "Secured Revenue",
-        value: moneyFormater(securedRevenue, moneyFormat) ?? 0,
+        title: "Draft Campaigns",
+        value:  totalDraftCampaigns,
         bg: "#ffaacc",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
@@ -84,8 +95,8 @@ const SubscriberDetailsCart = ({
         ),
       },
       {
-        title: "Insurance Earning",
-        value: moneyFormater(insuranceEarning, moneyFormat) ?? 0,
+        title: "Pending Campaigns",
+        value:  totalOthersCampaigns,
         bg: "#ffccaa",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">
@@ -127,4 +138,4 @@ const SubscriberDetailsCart = ({
   );
 };
 
-export default SubscriberDetailsCart;
+export default CampaignsDetailsCart;

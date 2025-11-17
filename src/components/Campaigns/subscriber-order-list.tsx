@@ -32,7 +32,7 @@ const SubscriberOrderList = ({
   setQueryValue: Function;
   queryValue: string;
 }) => {
-  const [itemStrings] = useState(["All", "Protected", "Unprotected"]);
+  const [itemStrings] = useState(["All", "Active", "Inactive", "Scheduled"]);
 
   const tabs: TabProps[] = itemStrings.map((item, index) => ({
     content: item,

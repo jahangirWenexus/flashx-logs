@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Button, Collapsible, TextField } from "@shopify/polaris";
 import SwitchWithLoading from "../common/switch-with-loading";
-import type { IPackagePackageProtection } from "./type";
 import { BASE_URL } from "../../config";
 
 const AppControlCard = ({
-  packageProtection,
+  store,
   setReFetch = () => {},
 }: {
-  packageProtection: IPackagePackageProtection;
+ store: any;
   setReFetch: any;
 }) => {
   const [loading, setLoading] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
+  // ts-ignore
   const [storeFrontLogLoading, setStoreFrontLogLoading] = useState(false);
   const [productHideLoading, setProductHideLoading] = useState(false);
 
@@ -21,12 +21,12 @@ const AppControlCard = ({
   const [open, setOpen] = useState(false);
 
   // const handleToggle = useCallback(() => setOpen((open) => !open), []);
-
+console.log(store, storeFrontLogLoading)
   const handleWidgetEnable = () => {
     setLoading(true);
     const formData = new FormData();
-    formData.append("storeId", packageProtection.storeId);
-    formData.append("enabledSwitch", packageProtection.enabled as any);
+    formData.append("storeId", store.id);
+    // formData.append("enabledSwitch", packageProtection.enabled as any);
     formData.append("action", "widgetEnable");
 
     fetch(`${BASE_URL}/admin/api/subscriber`, {
@@ -48,11 +48,11 @@ const AppControlCard = ({
   const handleAutoProtection = () => {
     setAutoLoading(true);
     const formData = new FormData();
-    formData.append("storeId", packageProtection.storeId);
-    formData.append(
-      "insuranceDisplayButton",
-      packageProtection.insuranceDisplayButton as any
-    );
+    formData.append("storeId", store.id);
+    // formData.append(
+    //   "insuranceDisplayButton",
+    //   packageProtection.insuranceDisplayButton as any
+    // );
     formData.append("action", "autoProtection");
 
     fetch(`${BASE_URL}/admin/api/subscriber`, {
@@ -72,11 +72,12 @@ const AppControlCard = ({
       });
   };
 
+  // ts-ignore
   const handleStoreFrontLog = () => {
     setStoreFrontLogLoading(true);
     const formData = new FormData();
-    formData.append("storeId", packageProtection.storeId);
-    formData.append("storeFrontLog", packageProtection.storeFrontLog as any);
+    formData.append("storeId", store.id);
+    // formData.append("storeFrontLog", packageProtection.storeFrontLog as any);
     formData.append("action", "storeFrontLog");
 
     fetch(`${BASE_URL}/admin/api/subscriber`, {
@@ -98,14 +99,15 @@ const AppControlCard = ({
 
   const handleProductHide = () => {
     setProductHideLoading(true);
+    handleStoreFrontLog()
     const formData = new FormData();
     formData.append("action", "productHide");
-    formData.append("storeId", packageProtection.storeId);
+    formData.append("storeId", store.id);
     formData.append("hideSelector", hideSelector as any);
-    formData.append(
-      "productHideSwitch",
-      !packageProtection.productHideSwitch as any
-    );
+    // formData.append(
+    //   "productHideSwitch",
+    //   !packageProtection.productHideSwitch as any
+    // );
 
     fetch(`${BASE_URL}/admin/api/subscriber`, {
       method: "POST",
@@ -130,8 +132,8 @@ const AppControlCard = ({
     setAutoLoading(false);
     setProductHideLoading(false);
     setStoreFrontLogLoading(false);
-    setHideSelector(packageProtection?.productHideSelector || "");
-  }, [packageProtection]);
+    // setHideSelector(packageProtection?.productHideSelector || "");
+  }, [store]);
 
   return (
     <div
@@ -141,51 +143,53 @@ const AppControlCard = ({
       <span className="text-lg font-bold">App Control</span>
 
       <div className="flex justify-between mt-2">
-        <span className="text-lg">Widget Enable</span>
-        {packageProtection && (
+        <span className="text-lg">App status</span>
+        {store && (
           <SwitchWithLoading
-            switchOn={packageProtection?.enabled}
+            switchOn={store?.development}
             handleSwitch={handleWidgetEnable}
             isLoading={loading}
           />
         )}
       </div>
+
       <div className="flex justify-between my-3">
-        <span className="text-lg">Auto Protection</span>
-        {packageProtection && (
+        <span className="text-lg">Review request</span>
+        {store && (
           <SwitchWithLoading
-            switchOn={packageProtection?.insuranceDisplayButton}
+            switchOn={store.appReview}
             handleSwitch={handleAutoProtection}
             isLoading={autoLoading}
           />
         )}
       </div>
-      <div className="flex justify-between my-3">
-        <span className="text-lg">Store Front Log</span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={packageProtection?.storeFrontLog}
-            handleSwitch={handleStoreFrontLog}
-            isLoading={storeFrontLogLoading}
-          />
-        )}
-      </div>
 
-      <div className="flex justify-between my-3">
-        <span
-          className="text-lg cursor-pointer"
-          onClick={() => setOpen((p) => !p)}
-        >
-          Hide Product From Store{" "}
-        </span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={packageProtection?.productHideSwitch}
-            handleSwitch={handleProductHide}
-            isLoading={productHideLoading}
-          />
-        )}
-      </div>
+      {/*<div className="flex justify-between my-3">*/}
+      {/*  <span className="text-lg">Store Front Log</span>*/}
+      {/*  {packageProtection && (*/}
+      {/*    <SwitchWithLoading*/}
+      {/*      switchOn={packageProtection?.storeFrontLog}*/}
+      {/*      handleSwitch={handleStoreFrontLog}*/}
+      {/*      isLoading={storeFrontLogLoading}*/}
+      {/*    />*/}
+      {/*  )}*/}
+      {/*</div>*/}
+
+      {/*<div className="flex justify-between my-3">*/}
+      {/*  <span*/}
+      {/*    className="text-lg cursor-pointer"*/}
+      {/*    onClick={() => setOpen((p) => !p)}*/}
+      {/*  >*/}
+      {/*    Hide Product From Store{" "}*/}
+      {/*  </span>*/}
+      {/*  {packageProtection && (*/}
+      {/*    <SwitchWithLoading*/}
+      {/*      switchOn={packageProtection?.productHideSwitch}*/}
+      {/*      handleSwitch={handleProductHide}*/}
+      {/*      isLoading={productHideLoading}*/}
+      {/*    />*/}
+      {/*  )}*/}
+      {/*</div>*/}
 
       <div className="my-2">
         <Collapsible

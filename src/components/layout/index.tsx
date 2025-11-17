@@ -27,7 +27,7 @@ const Layout = ({ children }: DashboardLayoutProps) => {
     return [
       { name: "Dashboard", url: "/", icon: HomeIcon },
       { name: "Subscribers", url: "/subscribers", icon: PackageIcon },
-      { name: "Orders", url: "/orders", icon: OrderIcon },
+      { name: "Campaigns", url: "/campaigns", icon: OrderIcon },
       {
         name: "Settings",
         url: "/settings",

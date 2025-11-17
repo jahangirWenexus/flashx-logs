@@ -1,6 +1,6 @@
 import { createHashRouter } from "react-router";
 import App from "./App";
-import Orders from "./components/orders";
+import Orders from "./components/Campaigns";
 import Layout from "./components/layout";
 import Subscribers from "./components/subscribers";
 import Subscriber from "./components/subscriber";
@@ -15,7 +15,7 @@ export const router = createHashRouter([
   { index: true, element: <App /> },
   { path: "login", element: <Login /> },
   {
-    path: "orders",
+    path: "campaigns",
     element: (
       <Layout>
         <Orders />
@@ -36,6 +36,16 @@ export const router = createHashRouter([
       <Layout>
         <Subscriber />
       </Layout>
+    ),
+  },
+  {
+    path: "subscribers/:storeId/:campaignId",
+    element: (
+        <Layout>
+          <div>
+            <h1>This is campaign page by campaign id</h1>
+          </div>
+        </Layout>
     ),
   },
   {

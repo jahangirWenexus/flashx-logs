@@ -61,3 +61,53 @@ export interface IPackagePackageProtection {
   enabled: boolean;
   storeId: string;
 }
+
+
+
+// Root type is an array of campaigns
+export interface IncludeRule {
+  Collections: unknown[];      // empty array in sample; adjust to `string[]` if IDs are strings
+  discountValue: string;       // e.g. "20"
+  discountType: 'PERCENTAGE' | string;
+}
+
+export interface TimezoneInfo {
+  id: string;                  // e.g. "Australia/Brisbane"
+  countryId: string;           // e.g. "AU"
+  gmtOffset: string;           // e.g. "UTC +10:00"
+}
+
+export interface Campaign {
+  id: string;
+  status: 'ACTIVE' | string; // keep open in case other statuses appear
+  name: string;
+
+  // ISO date-time strings; endDate can be null
+  startDate: string;            // e.g. "2025-11-05T05:23:00.000Z"
+  endDate: string | null;
+  statusUpdatedAt: string;
+
+  // Time zone IDs
+  startDateTimezoneId: string;  // e.g. "Australia/Brisbane"
+  endDateTimezoneId: string;    // e.g. "Australia/Brisbane"
+
+  // Media
+  campaignImage: string;        // URL
+
+  // Note: these arrive as strings in your payload
+  maxDiscount: string;          // e.g. " 20%"
+  overDiscountPriceItem: any;
+
+  totalSelectedProducts: string; // e.g. "1217"
+  processProducts: number;       // e.g. 1217
+  totalProcessProducts: number;  // e.g. 1217
+
+  Includes: IncludeRule[];
+
+  StartDateTimeZone: TimezoneInfo;
+  EndDateTimeZone: TimezoneInfo;
+}
+
+
+
+export type CampaignListType = Campaign[];

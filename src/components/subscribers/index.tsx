@@ -1,9 +1,9 @@
 import SubscribersCart from "./subscripber-card";
 import SubscriberList from "./subscriber-list";
 import useDebounce from "../../hooks/debounce";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { BASE_URL } from "../../config";
-import type { IStats, StoreRecordList } from "./type";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {BASE_URL} from "../../config";
+import type {IStats, StoreRecordList} from "./type";
 
 const initialStats: IStats = {
     currentInstalled: 0,
@@ -36,16 +36,10 @@ const Subscribers = () => {
         const myReqId = ++listReqIdRef.current;
 
         // Build URL safely
-        const params = new URLSearchParams({
-            page: String(page),
-            limit: "50",
-            filter: filters,
-            searchTerm: searchTerm ?? "",
-        });
 
         setLoading(true);
 
-        fetch(`${BASE_URL}/admin/dashboard?${params.toString()}`, {
+        fetch(`${BASE_URL}/admin/dashboard?page=${page}&limit=50&filter=${filters}&searchTerm=${searchTerm}`, {
             signal: controller.signal,
             // include CORS mode if needed; not required in most setups
             // mode: "cors",
@@ -83,6 +77,12 @@ const Subscribers = () => {
         setPage(1);
     }, [filters, searchTerm]);
 
+
+    // Reset to first page on filter/search changes
+    useEffect(() => {
+        setPage(1);
+    }, [filters, searchTerm]);
+
     // ---- Fetch Metrics (summary) ----
     const fetchMetrics = useCallback(() => {
         const controller = new AbortController();
@@ -90,9 +90,9 @@ const Subscribers = () => {
         fetch(`${BASE_URL}/api/app-summary`, {
             signal: controller.signal,
             // mode: "cors",
-            headers: { "Content-Type": "application/json" },
-            // credentials: "include",
+            headers: {"Content-Type": "application/json"},
             method: "GET",
+            // credentials: "include",
         })
             .then((res) => res.json())
             .then((res) => setStats(res ?? initialStats))
@@ -105,19 +105,18 @@ const Subscribers = () => {
         return () => controller.abort();
     }, []);
 
-    // Run metrics once on mount
     useEffect(() => {
         const cleanup = fetchMetrics();
         return () => {
-            // if fetchMetrics returned a cleanup, call it
             if (typeof cleanup === "function") cleanup();
         };
     }, [fetchMetrics]);
 
+
     return (
         <div className="p-6">
-            <SubscribersCart stats={stats} />
-            <br />
+            <SubscribersCart stats={stats}/>
+            <br/>
             <SubscriberList
                 stores={data ?? []}
                 pagination={pagination}

@@ -12,7 +12,7 @@ import AppControlCard from "./app-control-card.tsx";
 const Subscriber = () => {
     const {storeId} = useParams<{ storeId: string }>();
     // @ts-ignore
-    // const [reFetch, setReFetch] = useState<boolean>(false);
+    const [reFetch, setReFetch] = useState<boolean>(false);
     //
     // @ts-ignore
     const [stats, setStats] = useState<{
@@ -118,7 +118,7 @@ const Subscriber = () => {
                 <div className="col-span-1 md:col-span-6 lg:col-span-4 xl:col-span-2">
                   <AppControlCard
                     store={store}
-                    setReFetch={[]}
+                    setReFetch={setReFetch}
                   />
                 </div>
             </div>

@@ -91,6 +91,8 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
         []
     );
 
+    console.log('campaigns', campaigns);
+
     const formatters = useMemo(() => {
         if (!campaigns) {
             return null;
@@ -293,7 +295,6 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
                                 </div>
                             ) : (
                                 campaigns.length === 0 &&
-                                selected == 0 &&
                                 !pageLoading && (
                                     <EmptyState
                                         image={createCampaign}
@@ -389,11 +390,11 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
 
                                             <span
                                                 className={`ml-1  rounded-md font-bold ${
-                                                    campaign.status == 'Price_updating'
+                                                    campaign?.status == 'Price_updating'
                                                         ? 'bg-[#d5ebff] pt-1 pb-1 pr-2 pl-2'
-                                                        : campaign.status == 'Active' && campaign.totalSelectedProducts.length != 0
+                                                        : campaign.status == 'Active' && campaign?.totalSelectedProducts.length != 0
                                                             ? 'bg-[#b4fed2] pt-1 pb-1 pr-2 pl-2'
-                                                            : `bg-[#e3e3e3] ${campaign.totalSelectedProducts.length != 0 && 'pt-1 pb-1 pr-2 pl-2'}`
+                                                            : `bg-[#e3e3e3] ${campaign?.totalSelectedProducts?.length != 0 && 'pt-1 pb-1 pr-2 pl-2'}`
                                                 }`}
                                             >
 
@@ -401,7 +402,7 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
                                                         campaign.status
                                                     )
                                                         ? undefined
-                                                        : campaign.totalSelectedProducts.length == 0 ? null : `${formatNumber(campaign.totalSelectedProducts ?? 0)} Variants`}
+                                                        : campaign?.totalSelectedProducts?.length == 0 ? null : `${formatNumber(campaign?.totalSelectedProducts ?? 0)} Variants`}
                                 </span>
                                         </div>
                                         <div className="pt-2">
@@ -441,7 +442,7 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
                                                 <Badge
                                                     tone="info"
                                                     size="large"
-                                                >{`Start at ${formatters ? formatters[campaign.startDateTimezoneId].format(new Date(campaign.statusUpdatedAt)) : campaign.statusUpdatedAt}`}</Badge>
+                                                >{`Start at ${formatters ? formatters[campaign.startDateTimezoneId].format(new Date(campaign.startDate)) : campaign.startDate}`}</Badge>
                                                 <Badge size="large">
                                                     {campaign.endDate
                                                         ? `Ended at ${formatters ? formatters[campaign.endDateTimezoneId].format(new Date(campaign.endDate)) : campaign.endDate}`
@@ -464,7 +465,7 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
                                                 className={'flex flex-col max-w-fit gap-1'}
                                             >
                                                 <Badge size="large" tone={'success'}>
-                                                    {`Start at ${formatters ? formatters[campaign.startDateTimezoneId].format(new Date(campaign.statusUpdatedAt)) : campaign.statusUpdatedAt}`}
+                                                    {`Start at ${formatters ? formatters[campaign.startDateTimezoneId].format(new Date(campaign.startDate)) : campaign.startDate}`}
                                                 </Badge>
 
                                                 <Badge size="large">
@@ -478,7 +479,7 @@ export const CampaignsLists = ({campaigns, setFilters, pricingBannerOff = false}
                                                 className={'flex flex-col max-w-fit gap-1'}
                                             >
                                                 <Badge size="large">
-                                                    {`Start at ${formatters ? formatters[campaign.startDateTimezoneId].format(new Date(campaign.statusUpdatedAt)) : campaign.statusUpdatedAt}`}
+                                                    {`Start at ${formatters ? formatters[campaign.startDateTimezoneId].format(new Date(campaign.startDate)) : campaign.startDate}`}
                                                 </Badge>
 
                                                 <Badge size="large">

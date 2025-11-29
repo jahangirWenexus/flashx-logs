@@ -95,7 +95,7 @@ const DateRangePicker = ({
   ];
 
   const [popoverActive, setPopoverActive] = useState(false);
-  const [activeDateRange, setActiveDateRange] = useState(ranges[0]);
+  const [activeDateRange, setActiveDateRange] = useState(ranges[3]);
   const [inputValues, setInputValues] = useState<{
     until?: string;
     since?: string;

@@ -1,15 +1,18 @@
 export const default30Days = () => {
-  const till = new Date();
-  const since = new Date().setHours(0, 0, 0, 0);
+  const until = new Date();          // now
+  const since = new Date(until);     // copy of 'until'
 
-  // since.setDate(till.getDate() );
+  // Go back 30 days
+  since.setDate(since.getDate() - 30);
+  // Start of that day (00:00:00.000)
+  since.setHours(0, 0, 0, 0);
 
   return {
-    title: "Last 1 day",
-    alias: "last 1 day",
+    title: "Last 30 days",
+    alias: "last_30_days",
     period: {
-      since: new Date(since).toISOString(),
-      until: till.toISOString(),
+      since: since.toISOString(),
+      until: until.toISOString(),
     },
   };
 };

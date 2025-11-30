@@ -78,7 +78,7 @@ const Subscriber = () => {
 
                 console.error("Error fetching subscriber data:", err);
             });
-    }, [storeId, page, filters]);
+    }, [storeId, page, filters, reFetch]);
 
     useEffect(() => {
         setPage(1);

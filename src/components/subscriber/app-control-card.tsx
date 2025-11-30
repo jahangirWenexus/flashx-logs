@@ -11,7 +11,7 @@ import { BASE_URL } from "../../config";
 
 const AppControlCard = ({
                           store,
-                          setReFetch = () => {},
+                          setReFetch
                         }: {
   store: any;
   setReFetch: (value: any) => void;
@@ -123,6 +123,7 @@ console.log("resload store", store);
 
   // SUSPEND SWITCH CLICK
   const handleSuspendToggle = () => {
+      debugger
     if (!store) return;
 
     if (isBlocked) {
